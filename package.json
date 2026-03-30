@@ -1,0 +1,28 @@
+{
+  "name": "readme-i18n",
+  "version": "1.0.0",
+  "description": "Generate localized README files for any directory — single or multi-language (zh / en / de / fr / ru by default)",
+  "keywords": [
+    "claude-code",
+    "readme",
+    "i18n",
+    "internationalization",
+    "documentation",
+    "multilingual"
+  ],
+  "author": {
+    "name": "easyfan",
+    "email": "zhengfan@apache.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easyfan/readme-i18n.git"
+  },
+  "homepage": "https://github.com/easyfan/readme-i18n#readme",
+  "files": [
+    ".claude-plugin/",
+    "skills/",
+    "install.sh"
+  ]
+}

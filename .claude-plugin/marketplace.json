@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "readme-i18n",
+  "description": "Generate localized README files for any directory",
+  "owner": {
+    "name": "easyfan",
+    "email": "zhengfan@apache.org"
+  },
+  "plugins": [
+    {
+      "name": "readme-i18n",
+      "description": "1 skill (readme-i18n). Generates README files in one or multiple languages — default set: zh · en · de · fr · ru. Asks the user to choose single vs multi-language mode, inspects the target directory, and writes naturally-written READMEs for each selected language.",
+      "category": "utility",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/easyfan/readme-i18n.git",
+        "sha": "0000000000000000000000000000000000000000"
+      },
+      "homepage": "https://github.com/easyfan/readme-i18n"
+    }
+  ]
+}
