@@ -31,13 +31,30 @@ Generate README in:
 ```
 
 **If single**: ask which language — offer `zh / en / de / fr / ru` as quick options, or
-accept any BCP-47 language code.
+accept any BCP-47 language code or common alias (see Language alias table below).
 
 **If multi**: confirm the default set or let the user customize it:
 ```
 Default: zh · en · de · fr · ru
-Press Enter to confirm, or type codes to adjust (e.g. "en de ja"):
+Press Enter to confirm, or type codes to adjust (e.g. "en de ja" or "cn de ja"):
 ```
+
+**Language alias table** — normalize input codes before use:
+
+| User input | Normalized language | File suffix used | Notes |
+|------------|--------------------|--------------------|-------|
+| `cn`, `zh-cn`, `zh-hans` | Chinese (Simplified) | keep user input | Same content as `zh` |
+| `zh`, `zh-sg` | Chinese (Simplified) | keep user input | Default Simplified |
+| `zh-tw`, `zh-hk`, `zh-hant`, `zht` | Chinese (Traditional) | keep user input | Traditional variant |
+| `en`, `en-us`, `en-gb` | English | keep user input | |
+| `de`, `de-at`, `de-ch` | German | keep user input | |
+| `fr`, `fr-ca`, `fr-be` | French | keep user input | |
+| `ru` | Russian | keep user input | |
+| any other BCP-47 | that language | keep user input | |
+
+When an alias is recognized, silently normalize to the content language internally (for tone and
+writing style), but **preserve the user's original suffix in the output filename**.
+Example: user specifies `cn` → file is `README-cn.md`, content is Simplified Chinese.
 
 ### Step 3: Inspect the target directory
 
@@ -64,10 +81,11 @@ For each selected language, write a README that includes:
 | License | if detectable | from package manifest or LICENSE file |
 
 **Tone conventions by language**:
-- `en`: concise, imperative, technical
-- `zh`: warm, example-forward, 简洁
-- `de`: formal `Sie`-form, precise, structured
-- `fr`: neutral `vous`-form, descriptive
+- `en` / `en-*`: concise, imperative, technical
+- `zh` / `cn` / `zh-cn` / `zh-hans` / `zh-sg`: warm, example-forward, 简洁 (Simplified Chinese)
+- `zh-tw` / `zh-hk` / `zh-hant` / `zht`: warm, example-forward, 簡潔 (Traditional Chinese — use Traditional characters)
+- `de` / `de-*`: formal `Sie`-form, precise, structured
+- `fr` / `fr-*`: neutral `vous`-form, descriptive
 - `ru`: neutral, technical, concise
 
 Do not machine-translate from English. Write each language naturally.
@@ -77,11 +95,14 @@ Do not machine-translate from English. Write each language naturally.
 | Language | Filename |
 |----------|----------|
 | English (en) | `README.md` |
-| Chinese (zh) | `README-zh.md` |
-| German (de) | `README-de.md` |
-| French (fr) | `README-fr.md` |
-| Russian (ru) | `README-ru.md` |
-| Other | `README-<code>.md` |
+| Any other language | `README-<user-suffix>.md` |
+
+The filename suffix is always the **exact code the user specified** (or the default code from
+the language set). Examples:
+- user specifies `zh` → `README-zh.md`
+- user specifies `cn` → `README-cn.md`
+- user specifies `zh-tw` → `README-zh-tw.md`
+- default set includes `zh` → `README-zh.md`
 
 In multi-language mode, `README.md` is always the English version (or the primary
 language if English was not selected — prompt the user to designate one).
@@ -107,7 +128,9 @@ Created:
 
 When the user asks to **update or modify** a README in a directory:
 
-1. Detect all `README*.md` files in the target directory.
+1. Detect all `README*.md` files in the target directory. When mapping existing files to
+   languages, apply the alias table: `README-cn.md` and `README-zh.md` both count as
+   Simplified Chinese (treat as one slot, not two separate languages).
 2. **If the existing files cover only a single language or a partial set** (i.e. not all
    five of zh · en · de · fr · ru are present), prompt the user:
    ```
