@@ -105,15 +105,24 @@ Created:
 
 ## Modify existing READMEs
 
-When the user asks to **update or modify** a README in a directory, apply the change to
-**all language versions that exist** by default:
+When the user asks to **update or modify** a README in a directory:
 
 1. Detect all `README*.md` files in the target directory.
-2. Apply the requested change to every file (translated appropriately per language).
-3. Report which files were updated.
+2. **If the existing files cover only a single language or a partial set** (i.e. not all
+   five of zh · en · de · fr · ru are present), prompt the user:
+   ```
+   Found: README.md (en)
+   The full language set is zh · en · de · fr · ru.
+   Expand to all 5 languages while updating? [Y/n]
+   ```
+   - If **yes**: apply the update to existing files AND generate the missing language
+     versions from scratch (same flow as Step 3–5 above).
+   - If **no**: apply the change only to the existing files.
+3. Apply the requested change to every selected file (translated appropriately per language).
+4. Report which files were updated and which were newly created.
 
 If the user specifies a subset of languages explicitly (e.g. "update only the Chinese
-README"), apply the change to that subset only.
+README"), skip the expansion prompt and apply the change to that subset only.
 
 ## Delete READMEs
 
