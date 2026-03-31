@@ -48,7 +48,7 @@ cp -r skills/readme-i18n ~/.claude/skills/
 为 src/utils 创建中英文 README
 ```
 
-触发后，skill 会询问语言模式：
+触发后，skill 会先检测目标目录是否已有 README 文件。若存在，会询问是更新现有文件、补充缺失语言，还是重新生成；否则直接询问语言模式：
 
 ```
 请选择 README 语言：
@@ -56,23 +56,44 @@ cp -r skills/readme-i18n ~/.claude/skills/
   2. 多语言  [默认：zh · en · de · fr · ru]
 ```
 
-- **单一语言**：从 zh / en / de / fr / ru 中选择，或输入任意 BCP-47 语言代码
+- **单一语言**：从 `zh / cn / en / de / fr / ru` 中选择，或输入任意 BCP-47 语言代码
 - **多语言**：确认或自定义默认语言集
+
+若选定的语言集不含英语，会在生成前要求指定一种语言作为主版本（`README.md`）。
+
+---
+
+## 语言别名
+
+支持常见别名，输出文件名保留用户指定的后缀：
+
+| 输入 | 内容语言 | 输出文件名 |
+|------|---------|-----------|
+| `cn`、`zh-cn`、`zh-hans` | 简体中文 | `README-cn.md` / `README-zh-cn.md` … |
+| `zh`、`zh-sg` | 简体中文 | `README-zh.md` |
+| `zh-tw`、`zh-hk`、`zh-hant`、`zht` | 繁体中文 | `README-zh-tw.md` … |
+| `en`、`en-us`、`en-gb` | 英语 | `README.md` |
+| 其他 BCP-47 | 对应语言 | `README-<代码>.md` |
+
+无效代码（如 `xyz123`）会被拒绝并给出提示。
 
 ---
 
 ## 输出文件
 
-| 语言 | 文件名 |
-|------|--------|
-| 英语 (en) | `README.md` |
-| 中文 (zh) | `README-zh.md` |
-| 德语 (de) | `README-de.md` |
-| 法语 (fr) | `README-fr.md` |
-| 俄语 (ru) | `README-ru.md` |
-| 其他 | `README-<代码>.md` |
+| 模式 | 语言 | 文件名 |
+|------|------|--------|
+| 单语言 | 英语 (en) | `README.md` |
+| 单语言 | 其他语言 | `README-<代码>.md` |
+| 多语言 | 英语 (en) | `README.md` |
+| 多语言 | 指定主语言（非英语） | `README.md` |
+| 多语言 | 其余语言 | `README-<代码>.md` |
 
-多语言模式下，`README.md` 始终为英文版本（若未选英语，则指定一种语言作为主版本）。
+当有 2 个或以上已存在文件将被覆盖时，提供批量确认选项：
+```
+已存在 3 个文件：README.md  README-zh.md  README-de.md
+全部覆盖？[Y] 全部覆盖 / [N] 全部跳过 / [D] 逐个确认
+```
 
 **修改/删除默认作用于全部语言版本**，如需仅操作特定语言，在指令中注明即可。
 

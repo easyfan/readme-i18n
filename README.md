@@ -48,7 +48,8 @@ Generate a multilingual README for this project
 Create README files for src/utils — Chinese and English only
 ```
 
-When triggered, the skill asks:
+When triggered, the skill first checks for existing README files. If found, it asks whether to
+update, add missing languages, or recreate from scratch. Otherwise it asks for language mode:
 
 ```
 Generate README in:
@@ -56,24 +57,45 @@ Generate README in:
   2. Multi-language  [default: zh · en · de · fr · ru]
 ```
 
-- **Single**: pick one language (zh / en / de / fr / ru or any BCP-47 code)
+- **Single**: pick one language — quick options `zh / cn / en / de / fr / ru` or any BCP-47 code
 - **Multi**: confirm or customize the default set
+
+If the selected set does not include English, you are asked to designate one language as the
+primary `README.md` before generation starts.
+
+---
+
+## Language aliases
+
+Common aliases are accepted and preserve the user-specified suffix in the filename:
+
+| Input | Content language | Output filename |
+|-------|-----------------|-----------------|
+| `cn`, `zh-cn`, `zh-hans` | Simplified Chinese | `README-cn.md` / `README-zh-cn.md` … |
+| `zh`, `zh-sg` | Simplified Chinese | `README-zh.md` |
+| `zh-tw`, `zh-hk`, `zh-hant`, `zht` | Traditional Chinese | `README-zh-tw.md` … |
+| `en`, `en-us`, `en-gb` | English | `README.md` |
+| any other BCP-47 | that language | `README-<code>.md` |
+
+Invalid codes (e.g. `xyz123`) are rejected with a helpful error message.
 
 ---
 
 ## Output files
 
-| Language | Filename |
-|----------|----------|
-| English (en) | `README.md` |
-| Chinese (zh) | `README-zh.md` |
-| German (de) | `README-de.md` |
-| French (fr) | `README-fr.md` |
-| Russian (ru) | `README-ru.md` |
-| Other | `README-<code>.md` |
+| Mode | Language | Filename |
+|------|----------|----------|
+| Single | English (en) | `README.md` |
+| Single | Any non-English | `README-<code>.md` |
+| Multi | English (en) | `README.md` |
+| Multi | Designated primary (non-English) | `README.md` |
+| Multi | All others | `README-<code>.md` |
 
-In multi-language mode, `README.md` is always the English version (or the designated
-primary language if English is not selected).
+When 2 or more existing files would be overwritten, a batch confirmation is offered:
+```
+3 files already exist: README.md  README-zh.md  README-de.md
+Overwrite all? [Y]es all / [N]o, skip all / [D]ecide individually
+```
 
 ---
 

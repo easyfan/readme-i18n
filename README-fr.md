@@ -48,7 +48,9 @@ Génère un README multilingue pour ce projet
 Crée des README pour src/utils — en chinois et en anglais seulement
 ```
 
-Une fois déclenché, le skill pose la question suivante :
+Une fois déclenché, le skill vérifie d'abord si des fichiers README existent déjà dans le
+répertoire cible. Le cas échéant, il demande s'il faut mettre à jour les fichiers existants,
+ajouter les langues manquantes ou tout recréer. Sinon, il pose la question suivante :
 
 ```
 Générer le README en :
@@ -56,23 +58,45 @@ Générer le README en :
   2. Multilingue  [par défaut : zh · en · de · fr · ru]
 ```
 
-- **Langue unique** : choisissez parmi zh / en / de / fr / ru ou saisissez n'importe quel code BCP-47
+- **Langue unique** : choisissez parmi `zh / cn / en / de / fr / ru` ou saisissez n'importe quel code BCP-47
 - **Multilingue** : confirmez ou personnalisez l'ensemble de langues par défaut
+
+Si l'ensemble sélectionné ne comprend pas l'anglais, une langue est désignée comme version
+principale (`README.md`) avant le début de la génération.
+
+---
+
+## Alias de langue
+
+Les alias courants sont acceptés ; le suffixe du nom de fichier correspond à la saisie de l'utilisateur :
+
+| Saisie | Langue du contenu | Fichier de sortie |
+|--------|------------------|-------------------|
+| `cn`, `zh-cn`, `zh-hans` | Chinois simplifié | `README-cn.md` / `README-zh-cn.md` … |
+| `zh`, `zh-sg` | Chinois simplifié | `README-zh.md` |
+| `zh-tw`, `zh-hk`, `zh-hant`, `zht` | Chinois traditionnel | `README-zh-tw.md` … |
+| `en`, `en-us`, `en-gb` | Anglais | `README.md` |
+| Tout autre code BCP-47 | Langue correspondante | `README-<code>.md` |
+
+Les codes invalides (p. ex. `xyz123`) sont rejetés avec un message d'erreur explicite.
 
 ---
 
 ## Fichiers générés
 
-| Langue | Nom de fichier |
-|--------|----------------|
-| Anglais (en) | `README.md` |
-| Chinois (zh) | `README-zh.md` |
-| Allemand (de) | `README-de.md` |
-| Français (fr) | `README-fr.md` |
-| Russe (ru) | `README-ru.md` |
-| Autre | `README-<code>.md` |
+| Mode | Langue | Nom de fichier |
+|------|--------|----------------|
+| Langue unique | Anglais (en) | `README.md` |
+| Langue unique | Toute autre langue | `README-<code>.md` |
+| Multilingue | Anglais (en) | `README.md` |
+| Multilingue | Langue principale désignée (non anglais) | `README.md` |
+| Multilingue | Toutes les autres langues | `README-<code>.md` |
 
-En mode multilingue, `README.md` correspond toujours à la version anglaise (ou à la langue principale désignée si l'anglais n'est pas sélectionné).
+Lorsque 2 fichiers ou plus seraient écrasés, une confirmation groupée est proposée :
+```
+3 fichiers existent déjà : README.md  README-zh.md  README-de.md
+Écraser tout ? [Y] Tout écraser / [N] Tout ignorer / [D] Décider individuellement
+```
 
 **Les modifications et suppressions s'appliquent par défaut à toutes les versions linguistiques.** Pour n'agir que sur une langue spécifique, précisez-le explicitement.
 
