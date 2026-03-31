@@ -20,6 +20,27 @@ multi-language output. In multi-language mode the default set is zh · en · de 
 Determine the target directory from the user's request. If not specified, use the current
 working directory. If ambiguous, ask the user to confirm before proceeding.
 
+### Step 1.5: Detect existing README files
+
+Before asking about language mode, check whether any `README*.md` files already exist in the
+target directory.
+
+```
+ls <target_directory>/README*.md 2>/dev/null
+```
+
+- **If files are found**: list them and ask the user:
+  ```
+  Found existing README files:
+    README.md  README-zh.md  README-de.md
+  Do you want to (U)pdate existing files, (A)dd missing languages, or (C)reate all from scratch?
+  ```
+  - **Update**: go to the "Modify existing READMEs" section below.
+  - **Add missing languages**: continue to Step 2, but skip languages that already have a file.
+  - **Create from scratch**: continue to Step 2 (existing files will trigger the overwrite prompt in Step 5).
+
+- **If no files are found**: continue directly to Step 2.
+
 ### Step 2: Ask language mode
 
 Present the user with a choice:
@@ -39,6 +60,18 @@ Default: zh · en · de · fr · ru
 Press Enter to confirm, or type codes to adjust (e.g. "en de ja" or "cn de ja"):
 ```
 
+> **Note on `zh`**: In the default set, `zh` produces Simplified Chinese content. For Traditional
+> Chinese use `zh-tw` or `zh-hant`. BCP-47 recommends `zh-Hans` / `zh-Hant` for explicit
+> disambiguation, but short aliases (`zh`, `zh-tw`) are equally accepted.
+
+**If the confirmed language set does not include `en`**: immediately ask which language should
+serve as the primary README (i.e. be written to `README.md`):
+```
+The selected languages do not include English. Which language should be the primary README.md?
+  → zh  de  fr  ru  (or any language from your set)
+```
+Record the answer as the **primary language** before proceeding to Step 3.
+
 **Language alias table** — normalize input codes before use:
 
 | User input | Normalized language | File suffix used | Notes |
@@ -55,6 +88,13 @@ Press Enter to confirm, or type codes to adjust (e.g. "en de ja" or "cn de ja"):
 When an alias is recognized, silently normalize to the content language internally (for tone and
 writing style), but **preserve the user's original suffix in the output filename**.
 Example: user specifies `cn` → file is `README-cn.md`, content is Simplified Chinese.
+
+**Language code validation**: if the user enters a code that is neither in the alias table nor a
+plausible BCP-47 subtag (letters and hyphens only, e.g. `ja`, `ko`, `pt-br`), reject it:
+```
+"xyz123" is not a recognized language code. Please enter a valid BCP-47 code (e.g. ja, ko, pt-br)
+or one of the quick options: zh / cn / en / de / fr / ru
+```
 
 ### Step 3: Inspect the target directory
 
@@ -92,10 +132,13 @@ Do not machine-translate from English. Write each language naturally.
 
 ### Step 5: Write files
 
-| Language | Filename |
-|----------|----------|
-| English (en) | `README.md` |
-| Any other language | `README-<user-suffix>.md` |
+| Mode | Language | Filename |
+|------|----------|----------|
+| Single-language | English (en) | `README.md` |
+| Single-language | Any non-English | `README-<user-suffix>.md` (no `README.md` created) |
+| Multi-language | English (en) | `README.md` |
+| Multi-language | Primary language (non-English, user designated) | `README.md` |
+| Multi-language | All other languages | `README-<user-suffix>.md` |
 
 The filename suffix is always the **exact code the user specified** (or the default code from
 the language set). Examples:
@@ -104,13 +147,21 @@ the language set). Examples:
 - user specifies `zh-tw` → `README-zh-tw.md`
 - default set includes `zh` → `README-zh.md`
 
-In multi-language mode, `README.md` is always the English version (or the primary
-language if English was not selected — prompt the user to designate one).
+In multi-language mode, `README.md` is always the English version (or the primary language
+designated in Step 2 if English was not selected).
 
-If a file already exists, ask before overwriting:
+If files already exist, ask before overwriting. When **2 or more** files would be overwritten,
+offer a batch option first:
 ```
-README-zh.md already exists. Overwrite? [y/N]
+3 files already exist: README.md  README-zh.md  README-de.md
+Overwrite all? [Y]es all / [N]o, skip all / [D]ecide individually
 ```
+- **Yes all**: overwrite all without further prompts.
+- **No, skip all**: keep existing files; only write truly new ones.
+- **Decide individually**: ask for each file:
+  ```
+  README-zh.md already exists. Overwrite? [y/N]
+  ```
 
 After writing, report a summary:
 ```
