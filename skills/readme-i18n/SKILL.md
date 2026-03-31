@@ -190,18 +190,22 @@ When the user asks to **update or modify** a README in a directory:
 1. Detect all `README*.md` files in the target directory. When mapping existing files to
    languages, apply the alias table: `README-cn.md` and `README-zh.md` both count as
    Simplified Chinese (treat as one slot, not two separate languages).
-2. **If the existing files cover only a single language or a partial set** (i.e. not all
+2. **Always show what was found** before proceeding:
+   ```
+   Found: README.md (en), README-CN.md (zh)
+   ```
+3. **If the existing files cover only a single language or a partial set** (i.e. not all
    five of zh · en · de · fr · ru are present), prompt the user:
    ```
-   Found: README.md (en)
+   Found: README.md (en), README-CN.md (zh)
    The full language set is zh · en · de · fr · ru.
-   Expand to all 5 languages while updating? [Y/n]
+   Also generate missing languages (3 new files: de, fr, ru)? [y/N]
    ```
    - If **yes**: apply the update to existing files AND generate the missing language
      versions from scratch (same flow as Step 3–5 above).
    - If **no**: apply the change only to the existing files.
-3. Apply the requested change to every selected file (translated appropriately per language).
-4. Report which files were updated and which were newly created.
+4. Apply the requested change to every selected file (translated appropriately per language).
+5. Report which files were updated and which were newly created.
 
 If the user specifies a subset of languages explicitly (e.g. "update only the Chinese
 README"), skip the expansion prompt and apply the change to that subset only.
