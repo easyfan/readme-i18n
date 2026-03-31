@@ -1,8 +1,28 @@
 # readme-i18n
 
-Erstellt lokalisierte README-Dateien für beliebige Verzeichnisse — als Einzelsprache oder in mehreren Sprachen gleichzeitig.
+**Erstellt, aktualisiert, übersetzt und löscht** lokalisierte README-Dateien für beliebige
+Verzeichnisse. Jede Sprachversion wird nativ verfasst — keine maschinelle Übersetzung aus
+dem Englischen.
 
-Standard-Sprachset: **zh · en · de · fr · ru**
+Standard-Sprachset: **zh · en · de · fr · ru** (5 der 6 UN-Amtssprachen, ~4 Mrd. Muttersprachler)
+
+---
+
+## Funktionen
+
+- **Erstellen**: Inhalte aus dem Quellcode ableiten und in mehreren Sprachen generieren
+- **Aktualisieren**: Änderungen in alle Sprachversionen gleichzeitig übernehmen
+- **Übersetzen**: Eine einzelsprachige README auf das vollständige Sprachset erweitern
+- **Löschen**: Alle oder einzelne Sprachversionen mit Bestätigung entfernen
+
+Natürlichsprachliche Aktivierung:
+
+```
+Füge eine README zu packer/my-plugin hinzu
+Erstelle eine mehrsprachige README für dieses Projekt
+Aktualisiere nur die deutsche README mit den neuen API-Änderungen
+Lösche die russische README
+```
 
 ---
 
@@ -38,37 +58,9 @@ cp -r skills/readme-i18n ~/.claude/skills/
 
 ---
 
-## Verwendung
+## Sprachunterstützung
 
-Weisen Sie Claude an, für ein Verzeichnis eine README zu erstellen:
-
-```
-Füge eine README zu packer/my-plugin hinzu
-Erstelle eine mehrsprachige README für dieses Projekt
-Erstelle README-Dateien für src/utils – nur Chinesisch und Englisch
-```
-
-Nach der Aktivierung prüft das Skill zunächst, ob bereits README-Dateien im Zielverzeichnis
-vorhanden sind. Falls ja, wird gefragt, ob vorhandene Dateien aktualisiert, fehlende Sprachen
-ergänzt oder alle Dateien neu erstellt werden sollen. Andernfalls wird der Sprachmodus abgefragt:
-
-```
-README erstellen in:
-  1. Einzelsprache
-  2. Mehrsprachig  [Standard: zh · en · de · fr · ru]
-```
-
-- **Einzelsprache**: Auswahl aus `zh / cn / en / de / fr / ru` oder beliebiger BCP-47-Sprachcode
-- **Mehrsprachig**: Standard-Sprachset bestätigen oder anpassen
-
-Falls das gewählte Sprachset kein Englisch enthält, wird vor der Generierung eine Sprache als
-Hauptversion (`README.md`) festgelegt.
-
----
-
-## Sprachaliase
-
-Gängige Aliase werden akzeptiert; das Dateinamensuffix entspricht der Benutzereingabe:
+Akzeptiert BCP-47-Codes und gängige Aliase. Das Dateinamensuffix entspricht der Benutzereingabe:
 
 | Eingabe | Inhaltssprache | Ausgabedatei |
 |---------|---------------|--------------|
@@ -76,9 +68,15 @@ Gängige Aliase werden akzeptiert; das Dateinamensuffix entspricht der Benutzere
 | `zh`, `zh-sg` | Vereinfachtes Chinesisch | `README-zh.md` |
 | `zh-tw`, `zh-hk`, `zh-hant`, `zht` | Traditionelles Chinesisch | `README-zh-tw.md` … |
 | `en`, `en-us`, `en-gb` | Englisch | `README.md` |
+| `de`, `de-at`, `de-ch` | Deutsch | `README-de.md` … |
+| `fr`, `fr-ca`, `fr-be` | Französisch | `README-fr.md` … |
+| `ru` | Russisch | `README-ru.md` |
 | Sonstiger BCP-47-Code | Jeweilige Sprache | `README-<code>.md` |
 
-Ungültige Codes (z. B. `xyz123`) werden mit einer hilfreichen Fehlermeldung abgelehnt.
+Ungültige Codes werden abgelehnt. `cn` wird als Vereinfachtes Chinesisch erkannt.
+
+> **Hinweis zum Standard-Sprachset**: zh · en · de · fr · ru deckt 5 UN-Amtssprachen ab.
+> Für weitere Sprachen können `es` (Spanisch) oder `ja` (Japanisch) ergänzt werden.
 
 ---
 
@@ -87,18 +85,23 @@ Ungültige Codes (z. B. `xyz123`) werden mit einer hilfreichen Fehlermeldung abg
 | Modus | Sprache | Dateiname |
 |-------|---------|-----------|
 | Einzelsprache | Englisch (en) | `README.md` |
-| Einzelsprache | Andere Sprache | `README-<code>.md` |
+| Einzelsprache | Andere Sprache | `README-<code>.md` — kein `README.md` wird erstellt |
 | Mehrsprachig | Englisch (en) | `README.md` |
 | Mehrsprachig | Festgelegte Hauptsprache (nicht Englisch) | `README.md` |
 | Mehrsprachig | Alle weiteren Sprachen | `README-<code>.md` |
 
-Wenn 2 oder mehr vorhandene Dateien überschrieben würden, erscheint eine Sammelbestätigung:
+Im Mehrsprachigkeitsmodus wird eine Navigationszeile am Dateianfang eingefügt:
+```markdown
+[English](README.md) | [中文](README-zh.md) | [Deutsch](README-de.md) | ...
+```
+
+Bei 2 oder mehr zu überschreibenden Dateien erscheint eine Sammelbestätigung:
 ```
 3 Dateien existieren bereits: README.md  README-zh.md  README-de.md
 Alle überschreiben? [Y] Alle / [N] Keine / [D] Einzeln entscheiden
 ```
 
-**Änderungen und Löschvorgänge betreffen standardmäßig alle Sprachversionen.** Soll nur eine bestimmte Sprache bearbeitet werden, kann dies explizit angegeben werden.
+**Änderungen und Löschvorgänge betreffen standardmäßig alle Sprachversionen.** Für einzelne Sprachen bitte explizit angeben.
 
 ---
 

@@ -1,11 +1,12 @@
 ---
 name: readme-i18n
 description: >
-  Generate README files for a directory in one or multiple languages. Trigger when the
-  user asks to create, add, or generate a README for a directory or project. Also trigger
-  when the user mentions i18n, internationalization, or multi-language documentation.
-  Default language set for multi-language mode: Chinese (zh), English (en), German (de),
-  French (fr), Russian (ru).
+  Generate, update, translate, or delete README files for a directory in one or multiple
+  languages. Each language version is written natively — not machine-translated from English.
+  Trigger when the user asks to create, add, generate, update, modify, translate, or remove
+  a README for a directory or project. Also trigger when the user mentions i18n,
+  internationalization, multi-language documentation, or localized docs. Supports language
+  aliases: cn, zh-tw, zh-hant, en-us, de-at, fr-ca, and any BCP-47 code.
 ---
 
 # readme-i18n
@@ -129,6 +130,13 @@ For each selected language, write a README that includes:
 - `ru`: neutral, technical, concise
 
 Do not machine-translate from English. Write each language naturally.
+
+**In multi-language mode**: prepend a language navigation line to every generated file:
+```markdown
+[English](README.md) | [中文](README-zh.md) | [Deutsch](README-de.md) | [Français](README-fr.md) | [Русский](README-ru.md)
+```
+Adjust the list to match the actual languages being generated. Use the language's own name
+(e.g. 中文, Deutsch) rather than English names.
 
 ### Step 5: Write files
 

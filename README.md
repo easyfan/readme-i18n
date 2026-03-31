@@ -1,8 +1,32 @@
 # readme-i18n
 
-Generate localized README files for any directory — single-language or multi-language.
+**Generate, update, translate, and delete** localized README files for any directory —
+single-language or multi-language, written natively in each target language.
 
-Default language set: **zh · en · de · fr · ru**
+Unlike translation-based tools, readme-i18n writes each language version from scratch using
+the appropriate tone and conventions for that language. No machine translation from English.
+
+Default language set: **zh · en · de · fr · ru** (covers 5 of the 6 UN official languages,
+reaching ~4 billion native speakers)
+
+---
+
+## What it does
+
+- **Generates** README files in one or multiple languages from your project's source code
+- **Updates** existing README files across all language versions simultaneously
+- **Translates** a single-language README into your full language set
+- **Deletes** all or specific language versions with confirmation
+
+Trigger it naturally:
+
+```
+Add a README to packer/my-plugin
+Generate a multilingual README for this project
+Update only the German README with the new API changes
+Translate the existing README into Chinese and French
+Delete the Russian README
+```
 
 ---
 
@@ -38,36 +62,10 @@ cp -r skills/readme-i18n ~/.claude/skills/
 
 ---
 
-## Usage
+## Language support
 
-Ask Claude to generate a README for any directory:
-
-```
-Add a README to packer/my-plugin
-Generate a multilingual README for this project
-Create README files for src/utils — Chinese and English only
-```
-
-When triggered, the skill first checks for existing README files. If found, it asks whether to
-update, add missing languages, or recreate from scratch. Otherwise it asks for language mode:
-
-```
-Generate README in:
-  1. Single language
-  2. Multi-language  [default: zh · en · de · fr · ru]
-```
-
-- **Single**: pick one language — quick options `zh / cn / en / de / fr / ru` or any BCP-47 code
-- **Multi**: confirm or customize the default set
-
-If the selected set does not include English, you are asked to designate one language as the
-primary `README.md` before generation starts.
-
----
-
-## Language aliases
-
-Common aliases are accepted and preserve the user-specified suffix in the filename:
+Accepts standard BCP-47 codes and common aliases. The suffix in the output filename always
+matches what you typed:
 
 | Input | Content language | Output filename |
 |-------|-----------------|-----------------|
@@ -75,9 +73,16 @@ Common aliases are accepted and preserve the user-specified suffix in the filena
 | `zh`, `zh-sg` | Simplified Chinese | `README-zh.md` |
 | `zh-tw`, `zh-hk`, `zh-hant`, `zht` | Traditional Chinese | `README-zh-tw.md` … |
 | `en`, `en-us`, `en-gb` | English | `README.md` |
+| `de`, `de-at`, `de-ch` | German | `README-de.md` … |
+| `fr`, `fr-ca`, `fr-be` | French | `README-fr.md` … |
+| `ru` | Russian | `README-ru.md` |
 | any other BCP-47 | that language | `README-<code>.md` |
 
-Invalid codes (e.g. `xyz123`) are rejected with a helpful error message.
+Invalid codes are rejected with a helpful error. `cn` is accepted as Simplified Chinese
+(not treated as an unknown code).
+
+> **Default set note**: zh · en · de · fr · ru covers 5 UN official languages. Add `es`
+> (Spanish, ~500M speakers) or `ja` (highly active on GitHub) to expand further.
 
 ---
 
@@ -86,10 +91,15 @@ Invalid codes (e.g. `xyz123`) are rejected with a helpful error message.
 | Mode | Language | Filename |
 |------|----------|----------|
 | Single | English (en) | `README.md` |
-| Single | Any non-English | `README-<code>.md` |
+| Single | Any non-English | `README-<code>.md` only — no `README.md` created |
 | Multi | English (en) | `README.md` |
 | Multi | Designated primary (non-English) | `README.md` |
 | Multi | All others | `README-<code>.md` |
+
+In multi-language mode, a language navigation header is added to each file:
+```markdown
+[English](README.md) | [中文](README-zh.md) | [Deutsch](README-de.md) | ...
+```
 
 When 2 or more existing files would be overwritten, a batch confirmation is offered:
 ```
