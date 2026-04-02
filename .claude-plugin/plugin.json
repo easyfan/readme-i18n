@@ -2,7 +2,6 @@
   "name": "readme-i18n",
   "version": "1.0.0",
   "description": "Generate localized README files for any directory — single or multi-language (zh / en / de / fr / ru by default)",
-  "install": "bash install.sh",
   "author": {
     "name": "easyfan",
     "email": "zhengfan@apache.org"
